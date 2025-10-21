@@ -8,7 +8,7 @@ const createAdmin = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log("Connected to MongoDB");
 
-    const passwordHash = await bcrypt.hash("Gokulgk@12", 10);
+    const passwordHash = await bcrypt.hash("supersecretpassword", 10);
 
     const admin = await User.create({
       name: "Admin",
