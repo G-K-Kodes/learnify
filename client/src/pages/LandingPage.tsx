@@ -1,10 +1,8 @@
-import Navbar from "../components/layout/Navbar";
+import Layout from "../components/layout/Layout";
 
-function LandingPage() {
+function LandingComponent() {
   return (
     <div className="min-h-screen flex flex-col w-full">
-
-      <Navbar />
 
       {/* Hero Section */}
       <section className="flex-1 flex flex-col justify-center items-center text-center bg-gradient-to-r from-indigo-600 to-purple-500 text-white py-20 px-4 sm:px-6 lg:px-8 w-full">
@@ -53,14 +51,13 @@ function LandingPage() {
           </button>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-100 text-gray-600 text-sm sm:text-base py-8 w-full">
-        <div className="max-w-7xl mx-auto text-center px-4">
-          © 2025 Learnify. All rights reserved.
-        </div>
-      </footer>
     </div>
+  );
+}
+
+function LandingPage() {
+  return(
+    <Layout mainComponent={<LandingComponent />} />
   );
 }
 

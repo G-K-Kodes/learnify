@@ -2,11 +2,19 @@
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+interface LayoutProps {
+  children?: React.ReactNode;
+  mainComponent?: React.ReactNode; // component passed as JSX
+}
+
+export default function Layout({ children, mainComponent }: LayoutProps) {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1">
+        {mainComponent} {/* render the passed component */}
+        {children}
+      </main>
       <Footer />
     </div>
   );
