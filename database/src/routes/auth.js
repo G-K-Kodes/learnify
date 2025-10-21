@@ -2,7 +2,9 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const User = require("../models/User");
+const sendVerificationEmail = require("../utils/sendVerificationEmail");
 
 // 🧾 Register (only Student or Instructor)
 router.post("/register", async (req, res) => {
@@ -23,15 +25,59 @@ router.post("/register", async (req, res) => {
     // Hash password
     const passwordHash = await bcrypt.hash(password, 10);
 
-    // Create new user
-    const user = await User.create({ name, email, passwordHash, role });
+    // Generate email verification token
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    const verificationTokenExpires = Date.now() + 3600000; // 1 hour
 
-    res.status(201).json({ message: "User registered successfully", userId: user._id });
+    // Create new user
+    const user = await User.create({
+      name,
+      email,
+      passwordHash,
+      role,
+      verificationToken,
+      verificationTokenExpires,
+    });
+
+    // Send verification email
+    await sendVerificationEmail(user.email, verificationToken);
+
+    res.status(201).json({
+      message: "User registered successfully. Please verify your email.",
+      userId: user._id,
+    });
   } catch (err) {
     console.error("❌ Error during registration:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
+
+// Verify email
+router.get("/verify-email", async (req, res) => {
+  try {
+    const { token } = req.query;
+    if (!token) return res.status(400).json({ message: "Invalid verification link" });
+
+    const user = await User.findOne({
+      verificationToken: token,
+      verificationTokenExpires: { $gt: new Date() }, // Not expired
+    });
+
+    if (!user) return res.status(400).json({ message: "Invalid or expired verification link" });
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    user.verificationTokenExpires = undefined;
+    await user.save();
+
+    res.json({ message: "Email verified successfully", userId: user._id });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+module.exports = router;
 
 // 🔐 Login (any role)
 router.post("/login", async (req, res) => {
@@ -41,6 +87,13 @@ router.post("/login", async (req, res) => {
     // Find user
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Check if email is verified
+    if (!user.isVerified) {
+      return res
+        .status(403)
+        .json({ message: "Please verify your email before logging in." });
+    }
 
     // Validate password
     const isMatch = await bcrypt.compare(password, user.passwordHash);
@@ -54,15 +107,16 @@ router.post("/login", async (req, res) => {
     );
 
     res.json({
-      message: "Login successful",
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
-    });
+    message: "Login successful",
+    token,
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      isVerified: user.isVerified, // important
+    },
+  });
   } catch (err) {
     console.error("❌ Error during login:", err);
     res.status(500).json({ message: "Server error" });

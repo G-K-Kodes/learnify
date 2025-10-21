@@ -1,6 +1,9 @@
 import Layout from "../components/layout/Layout";
+import { useNavigate } from "react-router-dom";
 
 function LandingComponent() {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen flex flex-col w-full">
 
@@ -13,7 +16,9 @@ function LandingComponent() {
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-8">
             Join thousands of learners and explore curated online courses in tech, design, and more.
           </p>
-          <button className="bg-white text-indigo-600 font-bold px-6 py-3 rounded-lg hover:bg-gray-100 focus:outline-none">
+          <button 
+          onClick={() => navigate("/auth")}
+          className="bg-white text-indigo-600 font-bold px-6 py-3 rounded-lg hover:bg-gray-100 focus:outline-none">
             Get Started
           </button>
         </div>
@@ -46,7 +51,9 @@ function LandingComponent() {
           <p className="text-base sm:text-lg md:text-xl mb-6 max-w-2xl mx-auto">
             Sign up today and unlock access to hundreds of online courses designed to boost your skills.
           </p>
-          <button className="bg-indigo-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-indigo-700">
+          <button 
+          onClick={() => navigate("/auth")}
+          className="bg-indigo-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-indigo-700">
             Join Now
           </button>
         </div>

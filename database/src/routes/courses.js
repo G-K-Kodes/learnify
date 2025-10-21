@@ -102,6 +102,56 @@ router.post("/:id/enroll", auth, requireAnyRole(["Student"]), async (req, res) =
   }
 });
 
+// 👨‍🏫 Get student progress for a course (Instructor/Admin)
+router.get("/:id/progress", auth, requireAnyRole(["Instructor", "Admin"]), async (req, res) => {
+  try {
+    const course = await Course.findById(req.params.id)
+      .populate("studentsEnrolled", "name email role")
+      .lean(); // lean() gives plain JS objects
+
+    if (!course) return res.status(404).json({ message: "Course not found" });
+
+    // Instructors can view only their own courses
+    if (req.user.role === "Instructor" && course.instructor.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Not allowed" });
+    }
+
+    const totalVideos = course.videos.length;
+
+    const students = course.studentsEnrolled.map((student) => {
+      const progressEntry = course.progress?.find(
+        (p) => p.student.toString() === student._id.toString()
+      );
+
+      const completedVideos = progressEntry?.videosWatched
+        .filter((v) => v.completed)
+        .map((v) => v.videoIndex) || [];
+
+      const percentage = totalVideos
+        ? (completedVideos.length / totalVideos) * 100
+        : 0;
+
+      return {
+        studentId: student._id,
+        name: student.name,
+        email: student.email,
+        completedVideos,
+        percentage,
+      };
+    });
+
+    res.json({
+      courseTitle: course.title,
+      totalVideos,
+      students,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 // 🚫 Unenroll from a course (Student only)
 router.post("/:id/unenroll", auth, requireAnyRole(["Student"]), async (req, res) => {
   try {

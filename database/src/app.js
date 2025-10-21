@@ -19,6 +19,9 @@ app.use("/api/courses", courseRoutes);
 const progressRoutes = require("./routes/progress");
 app.use("/api/progress", progressRoutes);
 
+const instructorRoutes = require("./routes/instructor");
+app.use("/api/instructor", instructorRoutes);
+
 app.get("/", (req, res) => {
   res.send("Learnify backend running...");
 });

@@ -1,7 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+
   const menuItems = [
     { name: "Courses", href: "#courses" },
     { name: "About", href: "#about" },
@@ -12,7 +15,12 @@ function Navbar() {
     <nav className="bg-white shadow-md relative z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-4">
         {/* Logo */}
-        <h2 className="text-2xl font-bold text-indigo-600">Learnify</h2>
+        <h2
+          className="text-2xl font-bold text-indigo-600 cursor-pointer"
+          onClick={() => navigate("/")}
+        >
+          Learnify
+        </h2>
 
         {/* Desktop Menu */}
         <ul className="hidden md:flex items-center gap-6">
@@ -27,7 +35,10 @@ function Navbar() {
             </li>
           ))}
           <li>
-            <button className="bg-indigo-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-indigo-700 transition">
+            <button
+              onClick={() => navigate("/auth")}
+              className="bg-indigo-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-indigo-700 transition"
+            >
               Sign In
             </button>
           </li>
@@ -61,7 +72,10 @@ function Navbar() {
           </a>
         ))}
         <button
-          onClick={() => setIsOpen(false)}
+          onClick={() => {
+            setIsOpen(false);
+            navigate("/auth");
+          }}
           className="w-full text-left px-4 py-2 text-indigo-600 font-semibold hover:bg-indigo-100 transition"
         >
           Sign In
