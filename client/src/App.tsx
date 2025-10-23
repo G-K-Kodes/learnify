@@ -1,12 +1,13 @@
 import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import ProtectedRoute from "./components/common/protectedRoute";
+import ProtectedRoute from "./components/common/ProtectedRoute";
 import LandingPage from "./pages/LandingPage";
 import LoginOrRegister from "./pages/LoginOrRegisterPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import StudentDashboard from "./pages/StudentDashboard";
 import InstructorDashboard from "./pages/InstructorDashboard";
 import VerifyEmail from "./pages/VerifyEmail";
+import CourseDetails from "./pages/CourseDetails";
 
 const AutoRedirect: React.FC = () => {
   const navigate = useNavigate();
@@ -65,6 +66,13 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["Instructor"]}>
               <InstructorDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/instructor/course/:id"
+          element={
+            <ProtectedRoute allowedRoles={["Instructor"]}>
+              {<CourseDetails />}
             </ProtectedRoute>
           }
         />

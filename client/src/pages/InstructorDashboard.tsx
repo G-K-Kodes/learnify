@@ -34,13 +34,21 @@ const InstructorDashboard: React.FC = () => {
     thumbnail: "",
   });
 
-  const fetchCourses = async () => {
+  const [page, setPage] = useState(1);
+  const [limit] = useState(6);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const fetchCourses = async (pageNum = 1) => {
     setLoading(true);
     try {
-      const res = await axiosInstance.get("/instructor/my-courses", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axiosInstance.get(
+        `/instructor/my-courses?page=${pageNum}&limit=${limit}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setCourses(res.data.courses || []);
+      setTotalPages(res.data.totalPages || 1);
     } catch (err) {
       console.error(err);
       setCourses([]);
@@ -50,8 +58,8 @@ const InstructorDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchCourses();
-  }, []);
+    fetchCourses(page);
+  }, [page]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -66,7 +74,7 @@ const InstructorDashboard: React.FC = () => {
       await axiosInstance.delete(`/courses/${courseId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      fetchCourses();
+      fetchCourses(page);
     } catch (err) {
       console.error(err);
       alert("Failed to delete course.");
@@ -83,7 +91,9 @@ const InstructorDashboard: React.FC = () => {
     });
   };
 
-  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleEditChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setEditFormData({ ...editFormData, [e.target.name]: e.target.value });
   };
 
@@ -94,11 +104,19 @@ const InstructorDashboard: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setEditingCourseId(null);
-      fetchCourses();
+      fetchCourses(page);
     } catch (err) {
       console.error(err);
       alert("Failed to update course.");
     }
+  };
+
+  const handlePrev = () => {
+    if (page > 1) setPage(page - 1);
+  };
+
+  const handleNext = () => {
+    if (page < totalPages) setPage(page + 1);
   };
 
   return (
@@ -133,10 +151,10 @@ const InstructorDashboard: React.FC = () => {
               {showAddForm ? "Close Form" : "Add Course"}
             </button>
 
-            {showAddForm && <AddCourseForm onCourseAdded={fetchCourses} />}
+            {showAddForm && <AddCourseForm onCourseAdded={() => fetchCourses(page)} />}
           </div>
 
-          {/* Courses Analytics */}
+          {/* Courses List */}
           <div>
             <h2 className="text-xl font-semibold mb-4">Your Courses</h2>
             {courses.length === 0 ? (
@@ -196,17 +214,22 @@ const InstructorDashboard: React.FC = () => {
                         </>
                       ) : (
                         <>
+                          <img
+                            src={course.thumbnail || "/placeholder.jpg"}
+                            alt={course.title}
+                            className="w-full h-40 object-cover rounded-t-lg mb-2"
+                          />
                           <h3 className="text-lg font-semibold mb-2">{course.title}</h3>
-                          <p className="text-gray-600 text-sm">
+                          <p className="text-gray-600 text-sm mb-1">
                             Description: {course.description || "N/A"}
                           </p>
-                          <p className="text-gray-600 text-sm">
+                          <p className="text-gray-600 text-sm mb-1">
                             Category: {course.category || "N/A"}
                           </p>
-                          <p className="text-gray-600 text-sm">
+                          <p className="text-gray-600 text-sm mb-1">
                             Students Enrolled: {course.studentsEnrolled?.length ?? 0}
                           </p>
-                          <p className="text-gray-600 text-sm">
+                          <p className="text-gray-600 text-sm mb-1">
                             Completion Rate: {course.analytics?.completionRate ?? 0}%
                           </p>
                           <p className="text-gray-600 text-sm">
@@ -220,7 +243,7 @@ const InstructorDashboard: React.FC = () => {
                       <div className="mt-4 flex gap-2 flex-wrap">
                         <button
                           className="bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700"
-                          onClick={() => navigate(`/instructor/course/${course._id}/progress`)}
+                          onClick={() => navigate(`/instructor/course/${course._id}`)}
                         >
                           View Progress
                         </button>
@@ -243,6 +266,29 @@ const InstructorDashboard: React.FC = () => {
               </div>
             )}
           </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center gap-4 mt-6">
+              <button
+                onClick={handlePrev}
+                disabled={page === 1}
+                className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 disabled:opacity-50"
+              >
+                Prev
+              </button>
+              <span className="text-gray-700">
+                Page {page} of {totalPages}
+              </span>
+              <button
+                onClick={handleNext}
+                disabled={page === totalPages}
+                className="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+          )}
 
           {/* Student Interactions */}
           <div className="bg-white shadow-md rounded-lg p-6">
