@@ -29,34 +29,34 @@ const AdminDashboard: React.FC = () => {
       {/* Dashboard Sections */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Users Section */}
-        <div className="bg-white shadow-md rounded-lg p-6">
+        <div className="bg-slate-900 shadow-md rounded-lg p-6">
           <h2 className="text-xl font-semibold mb-4">User Management</h2>
-          <p className="text-gray-600">
+          <p className="text-gray-400">
             View and manage all instructors and students.
           </p>
-          <button className="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+          <button className="mt-4 bg-emerald-500 text-white px-4 py-2 rounded-md hover:bg-emerald-600">
             Manage Users
           </button>
         </div>
 
         {/* Courses Section */}
-        <div className="bg-white shadow-md rounded-lg p-6">
+        <div className="bg-slate-900 shadow-md rounded-lg p-6">
           <h2 className="text-xl font-semibold mb-4">Course Moderation</h2>
-          <p className="text-gray-600">
+          <p className="text-gray-400">
             Approve or review courses uploaded by instructors.
           </p>
-          <button className="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+          <button className="mt-4 bg-emerald-500 text-white px-4 py-2 rounded-md hover:bg-emerald-600">
             Review Courses
           </button>
         </div>
 
         {/* Analytics Section */}
-        <div className="bg-white shadow-md rounded-lg p-6 md:col-span-2">
+        <div className="bg-slate-900 shadow-md rounded-lg p-6 md:col-span-2">
           <h2 className="text-xl font-semibold mb-4">Platform Analytics</h2>
-          <p className="text-gray-600">
+          <p className="text-gray-400">
             View total students, instructors, courses, and enrollment stats.
           </p>
-          <button className="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+          <button className="mt-4 bg-emerald-500 text-white px-4 py-2 rounded-md hover:bg-emerald-600">
             View Analytics
           </button>
         </div>

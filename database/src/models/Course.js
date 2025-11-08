@@ -7,13 +7,20 @@ const courseSchema = new mongoose.Schema({
   category: { type: String },
   thumbnail: { type: String },
 
-  // 🎬 Videos
-  videos: [
+  // 🎬 Course Content
+  content: [
     {
       _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
-      title: String,
-      url: String,
-      duration: Number, // in seconds
+      title: { type: String, required: true },
+      type: { 
+        type: String, 
+        enum: ["video", "quiz", "pdf", "assignment", "link"], 
+        required: true 
+      }, // 👈 New attribute
+      url: { type: String }, // For videos, PDFs, etc.
+      duration: { type: Number }, // For videos (in seconds)
+      description: { type: String }, // Optional for content summary
+      metadata: { type: mongoose.Schema.Types.Mixed }, // Flexible field (e.g., quiz questions, file info)
     },
   ],
 
@@ -62,7 +69,7 @@ const courseSchema = new mongoose.Schema({
   progress: [
     {
       student: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-      completedVideos: [{ type: mongoose.Schema.Types.ObjectId }],
+      completedContents: [{ type: mongoose.Schema.Types.ObjectId }], // ✅ renamed from completedVideos
       percentage: { type: Number, default: 0 },
       lastUpdated: { type: Date, default: Date.now },
     },

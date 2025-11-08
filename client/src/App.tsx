@@ -1,92 +1,56 @@
-import { useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./components/common/ProtectedRoute";
+import { useAuthRedirect } from "./hooks/useAuthRedirect";
+
+// Pages
 import LandingPage from "./pages/LandingPage";
 import LoginOrRegister from "./pages/LoginOrRegisterPage";
-import AdminDashboard from "./pages/AdminDashboard";
-import StudentDashboard from "./pages/StudentDashboard";
-import InstructorDashboard from "./pages/InstructorDashboard";
 import VerifyEmail from "./pages/VerifyEmail";
+import PasswordRecoveryFlow from "./pages/PasswordRecoveryFlow"; 
+import AdminDashboard from "./pages/AdminDashboard";
+import InstructorDashboard from "./pages/InstructorDashboard";
+import StudentDashboard from "./pages/StudentDashboard";
 import CourseDetails from "./pages/CourseDetails";
+import NotFoundPage from "./pages/NotFoundPage";
 
 const AutoRedirect: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userStr = localStorage.getItem("user");
-    const user = userStr ? JSON.parse(userStr) : null;
-    const currentPath = location.pathname;
-
-    if (token && user) {
-      // User is logged in
-      if (!user.isVerified) {
-        // Unverified users can only go to verify-email
-        if (!currentPath.startsWith("/verify-email")) {
-          navigate(`/verify-email?token=${user.verificationToken}`, { replace: true });
-        }
-      } else {
-        if (currentPath === "/" || currentPath === "/auth") {
-          if (user.role === "Admin") navigate("/admin", { replace: true });
-          else if (user.role === "Instructor") navigate("/instructor", { replace: true });
-          else navigate("/student", { replace: true });
-        }
-      }
-    } else {
-      // Logged-out users
-      // They can visit only "/" or "/auth"
-      if (currentPath !== "/" && currentPath !== "/auth") {
-        navigate("/auth", { replace: true });
-      }
-    }
-  }, [navigate, location]);
-
+  useAuthRedirect();
   return null;
 };
 
 function App() {
   return (
-    <Router>
-      <AutoRedirect />
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/auth" element={<LoginOrRegister />} />
+    <>
+      <Toaster position="top-right" reverseOrder={false} />
+      <Router>
+        <AutoRedirect />
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/auth" element={<LoginOrRegister />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/forgot-password" element={<PasswordRecoveryFlow />} />
 
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute allowedRoles={["Admin"]}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/instructor"
-          element={
-            <ProtectedRoute allowedRoles={["Instructor"]}>
-              <InstructorDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/instructor/course/:id"
-          element={
-            <ProtectedRoute allowedRoles={["Instructor"]}>
-              {<CourseDetails />}
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/student"
-          element={
-            <ProtectedRoute allowedRoles={["Student"]}>
-              <StudentDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/verify-email/:token?" element={<VerifyEmail />} />
-      </Routes>
-    </Router>
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
+            <Route path="/admin" element={<AdminDashboard />} />
+          </Route>
+
+          <Route element={<ProtectedRoute allowedRoles={["Instructor"]} />}>
+            <Route path="/instructor" element={<InstructorDashboard />} />
+            <Route path="/instructor/course/:id" element={<CourseDetails />} />
+          </Route>
+
+          <Route element={<ProtectedRoute allowedRoles={["Student"]} />}>
+            <Route path="/student" element={<StudentDashboard />} />
+          </Route>
+
+          {/* Catch-all Route */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Router>
+    </>
   );
 }
 

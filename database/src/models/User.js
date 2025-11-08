@@ -31,6 +31,9 @@ const userSchema = new mongoose.Schema({
     viewAnalytics: { type: Boolean, default: false },
   },
 
+  failedLoginAttempts: { type: Number, default: 0 },
+  lockUntil: { type: Date, default: null },
+
   createdAt: { type: Date, default: Date.now },
 });
 

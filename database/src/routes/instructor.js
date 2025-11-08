@@ -185,4 +185,47 @@ router.get("/course/:id", auth, requireAnyRole(["Instructor"]), async (req, res)
   }
 });
 
+// 📊 Get instructor dashboard stats
+router.get("/stats", auth, requireAnyRole(["Instructor"]), async (req, res) => {
+  try {
+    const instructorId = req.user._id;
+
+    // 1️⃣ Find all courses by this instructor
+    const courses = await Course.find({ instructor: instructorId })
+      .populate("studentsEnrolled")
+      .lean();
+
+    // 2️⃣ Aggregate stats
+    const totalCourses = courses.length;
+    const totalStudents = new Set(
+      courses.flatMap((c) => c.studentsEnrolled.map((s) => s._id.toString()))
+    ).size;
+    const totalEarnings = courses.reduce((sum, c) => sum + c.price * c.studentsEnrolled.length, 0);
+
+    const allRatings = courses.flatMap((c) => c.ratings.map((r) => r.rating));
+    const averageRating =
+      allRatings.length > 0
+        ? parseFloat((allRatings.reduce((a, b) => a + b, 0) / allRatings.length).toFixed(2))
+        : 0;
+
+    // 3️⃣ Upsert (update or create) stats in cache
+    const stats = await InstructorStats.findOneAndUpdate(
+      { instructor: instructorId },
+      {
+        totalStudents,
+        totalCourses,
+        totalEarnings,
+        averageRating,
+        lastUpdated: new Date(),
+      },
+      { upsert: true, new: true }
+    );
+
+    res.json({ success: true, stats });
+  } catch (error) {
+    console.error("Error fetching instructor stats:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
 module.exports = router;

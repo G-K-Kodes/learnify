@@ -12,5 +12,9 @@ export default defineConfig({
     }),
     tailwindcss(),
   ],
+  server: {
+    host: true,   // enables network exposure
+    port: 5173,
+  },
 })
 

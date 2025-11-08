@@ -99,7 +99,7 @@ const CourseDetails: React.FC = () => {
     }, [id]);
 
     if (loading) {
-        return <div className="p-8 text-gray-700">Loading course details...</div>;
+        return <div className="p-8 text-gray-300">Loading course details...</div>;
     }
 
     if (!course) {
@@ -120,7 +120,7 @@ const CourseDetails: React.FC = () => {
             </div>
 
             {/* Course Overview */}
-            <div className="bg-white rounded-lg shadow-md p-6 flex flex-col md:flex-row gap-6">
+            <div className="bg-slate-900 rounded-lg shadow-md p-6 flex flex-col md:flex-row gap-6">
                 <img
                     src={course.thumbnail || "https://via.placeholder.com/200x120"}
                     alt="thumbnail"
@@ -128,12 +128,12 @@ const CourseDetails: React.FC = () => {
                 />
                 <div className="flex-1">
                     <h2 className="text-2xl font-semibold mb-2">{course.title}</h2>
-                    <p className="text-gray-600 mb-2">
+                    <p className="text-gray-400 mb-2">
                         <strong>Category:</strong> {course.category || "N/A"}
                     </p>
-                    <p className="text-gray-600 mb-4">{course.description || "No description available."}</p>
+                    <p className="text-gray-400 mb-4">{course.description || "No description available."}</p>
 
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-gray-700">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-gray-300">
                         <p><strong>Students Enrolled:</strong> {course.studentsEnrolled?.length ?? 0}</p>
                         <p><strong>Completion Rate:</strong> {course.analytics?.completionRate ?? 0}%</p>
                         <p><strong>Total Views:</strong> {course.analytics?.totalViews ?? 0}</p>
@@ -142,9 +142,9 @@ const CourseDetails: React.FC = () => {
             </div>
 
             {/* Analytics Section */}
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-slate-900 rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-semibold mb-4">📊 Analytics</h2>
-                <p className="text-gray-600 mb-2">Visualize engagement and performance here.</p>
+                <p className="text-gray-400 mb-2">Visualize engagement and performance here.</p>
                 {/* Placeholder for charts (use recharts or chart.js later) */}
                 <div className="bg-green-100 border border-green-300 rounded-md p-6 text-center text-gray-500">
                     [Charts will appear here – e.g., Views over Time, Completion Rates, Quiz Stats]
@@ -152,7 +152,7 @@ const CourseDetails: React.FC = () => {
             </div>
 
             {/* Students Section */}
-            <div className="bg-white rounded-lg shadow-md p-6 overflow-x-auto">
+            <div className="bg-slate-900 rounded-lg shadow-md p-6 overflow-x-auto">
                 <h2 className="text-xl font-semibold mb-4">👩‍🎓 Enrolled Students</h2>
                 {course.studentsEnrolled && course.studentsEnrolled.length > 0 ? (
                     <table className="min-w-full text-sm border">
@@ -176,12 +176,12 @@ const CourseDetails: React.FC = () => {
                         </tbody>
                     </table>
                 ) : (
-                    <p className="text-gray-600">No students enrolled yet.</p>
+                    <p className="text-gray-400">No students enrolled yet.</p>
                 )}
             </div>
 
             {/* Course Content Section */}
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-slate-900 rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-semibold mb-4">🎥 Course Content</h2>
                 {course.videos && course.videos.length > 0 ? (
                     <table className="min-w-full text-sm border">
@@ -205,15 +205,15 @@ const CourseDetails: React.FC = () => {
                         </tbody>
                     </table>
                 ) : (
-                    <p className="text-gray-600">No lessons added yet.</p>
+                    <p className="text-gray-400">No lessons added yet.</p>
                 )}
                 <button className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
-                    + Add New Video
+                    + Add New Content
                 </button>
             </div>
 
             {/* Q&A / Feedback Section */}
-            <div className="bg-white rounded-lg shadow-md p-6 overflow-x-auto">
+            <div className="bg-slate-900 rounded-lg shadow-md p-6 overflow-x-auto">
                 <h2 className="text-xl font-semibold mb-4">💬 Student Interactions</h2>
                 {course.discussions && course.discussions.length > 0 ? (
                     <table className="min-w-full text-sm border">
@@ -245,11 +245,11 @@ const CourseDetails: React.FC = () => {
                         </tbody>
                     </table>
                 ) : (
-                    <p className="text-gray-600">No questions from students yet.</p>
+                    <p className="text-gray-400">No questions from students yet.</p>
                 )}
             </div>
             {/* Ratings Section */}
-            <div className="bg-white rounded-lg shadow-md p-6 overflow-x-auto">
+            <div className="bg-slate-900 rounded-lg shadow-md p-6 overflow-x-auto">
                 <h2 className="text-xl font-semibold mb-4">⭐ Student Ratings & Reviews</h2>
                 {course.ratings && course.ratings.length > 0 ? (
                     <table className="min-w-full text-sm border">
@@ -273,7 +273,7 @@ const CourseDetails: React.FC = () => {
                         </tbody>
                     </table>
                 ) : (
-                    <p className="text-gray-600">No ratings yet.</p>
+                    <p className="text-gray-400">No ratings yet.</p>
                 )}
             </div>
 

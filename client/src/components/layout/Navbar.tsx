@@ -12,14 +12,14 @@ function Navbar() {
   ];
 
   return (
-    <nav className="bg-white shadow-md relative z-50">
+    <nav className="bg-slate-900 shadow-md relative z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-4">
         {/* Logo */}
         <h2
-          className="text-2xl font-bold text-indigo-600 cursor-pointer"
+          className="text-2xl font-bold text-blue-500 cursor-pointer"
           onClick={() => navigate("/")}
         >
-          Learnify
+          Lern.it
         </h2>
 
         {/* Desktop Menu */}
@@ -28,7 +28,7 @@ function Navbar() {
             <li key={item.name}>
               <a
                 href={item.href}
-                className="font-medium text-gray-800 hover:text-indigo-600 transition-colors"
+                className="font-medium text-gray-200 hover:text-amber-400 transition-colors"
               >
                 {item.name}
               </a>
@@ -37,7 +37,7 @@ function Navbar() {
           <li>
             <button
               onClick={() => navigate("/auth")}
-              className="bg-indigo-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-indigo-700 transition"
+              className="bg-emerald-500 text-white px-4 py-2 rounded-md font-semibold hover:bg-emerald-600 transition"
             >
               Sign In
             </button>
@@ -48,7 +48,7 @@ function Navbar() {
         <div className="md:hidden">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="text-gray-800 font-bold focus:outline-none"
+            className="text-gray-200 font-bold focus:outline-none"
           >
             {isOpen ? "Close" : "Menu"}
           </button>
@@ -57,7 +57,7 @@ function Navbar() {
 
       {/* Mobile Menu */}
       <div
-        className={`md:hidden absolute top-full right-0 w-48 bg-white shadow-md rounded-md py-2 transition-all duration-300 ${
+        className={`md:hidden absolute top-full right-0 w-48 bg-slate-800 shadow-md rounded-md py-2 transition-all duration-300 ${
           isOpen ? "opacity-100 visible" : "opacity-0 invisible"
         }`}
       >
@@ -66,7 +66,7 @@ function Navbar() {
             key={item.name}
             href={item.href}
             onClick={() => setIsOpen(false)}
-            className="block px-4 py-2 text-gray-800 hover:bg-indigo-100 transition-colors"
+            className="block px-4 py-2 text-gray-200 hover:bg-slate-700 hover:text-amber-400 transition-colors"
           >
             {item.name}
           </a>
@@ -76,7 +76,7 @@ function Navbar() {
             setIsOpen(false);
             navigate("/auth");
           }}
-          className="w-full text-left px-4 py-2 text-indigo-600 font-semibold hover:bg-indigo-100 transition"
+          className="w-full text-left px-4 py-2 text-emerald-400 font-semibold hover:bg-slate-700 transition"
         >
           Sign In
         </button>

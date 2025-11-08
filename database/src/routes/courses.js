@@ -3,6 +3,7 @@ const router = express.Router();
 const Course = require("../models/Course");
 const auth = require("../middleware/auth");
 const { requireAnyRole } = require("../middleware/roles");
+const { sendInstructorStats } = require("../socket");
 
 // 📚 Get all courses a student is enrolled in
 router.get("/my/enrollments", auth, requireAnyRole(["Student"]), async (req, res) => {
@@ -29,6 +30,9 @@ router.post("/", auth, requireAnyRole(["Instructor", "Admin"]), async (req, res)
       thumbnail,
       instructor: req.user._id,
     });
+    
+    await sendInstructorStats(req.user._id);
+
     res.status(201).json({ message: "Course created", course });
   } catch (err) {
     console.error(err);
@@ -75,7 +79,6 @@ router.put("/:id", auth, requireAnyRole(["Instructor", "Admin"]), async (req, re
     const course = await Course.findById(req.params.id);
     if (!course) return res.status(404).json({ message: "Course not found" });
 
-    // Instructor can update only their own courses
     if (req.user.role !== "Admin" && course.instructor.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "Not allowed" });
     }
@@ -83,13 +86,16 @@ router.put("/:id", auth, requireAnyRole(["Instructor", "Admin"]), async (req, re
     Object.assign(course, req.body);
     await course.save();
 
+    // ✅ Update stats for this instructor
+    await sendInstructorStats(course.instructor);
+
     res.json({ message: "Course updated", course });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
 });
 
-// 🗑 Delete a course (only creator or Admin)
+// 🗑 Delete a course
 router.delete("/:id", auth, requireAnyRole(["Instructor", "Admin"]), async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);
@@ -100,6 +106,10 @@ router.delete("/:id", auth, requireAnyRole(["Instructor", "Admin"]), async (req,
     }
 
     await course.deleteOne();
+
+    // ✅ Update stats for this instructor
+    await sendInstructorStats(course.instructor);
+
     res.json({ message: "Course deleted" });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
@@ -123,46 +133,44 @@ router.get("/:id/students", auth, requireAnyRole(["Instructor", "Admin"]), async
   }
 });
 
-// 🧑‍🎓 Enroll in a course (Student only)
+// 🧑‍🎓 Enroll in a course
 router.post("/:id/enroll", auth, requireAnyRole(["Student"]), async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);
     if (!course) return res.status(404).json({ message: "Course not found" });
 
-    // Prevent duplicate enrollment
     if (course.studentsEnrolled.some(id => id.toString() === req.user._id.toString())) {
-      return res.status(400).json({ message: "Already enrolled in this course" });
+      return res.status(400).json({ message: "Already enrolled" });
     }
 
     course.studentsEnrolled.push(req.user._id);
     await course.save();
 
+    // ✅ Update instructor stats
+    await sendInstructorStats(course.instructor);
+
     res.status(200).json({ message: "Enrolled successfully", courseId: course._id });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 });
 
-// 🚫 Unenroll from a course (Student only)
+// 🚫 Unenroll from a course
 router.post("/:id/unenroll", auth, requireAnyRole(["Student"]), async (req, res) => {
   try {
     const course = await Course.findById(req.params.id);
     if (!course) return res.status(404).json({ message: "Course not found" });
 
-    const index = course.studentsEnrolled.findIndex(
-      id => id.toString() === req.user._id.toString()
+    course.studentsEnrolled = course.studentsEnrolled.filter(
+      id => id.toString() !== req.user._id.toString()
     );
-    if (index === -1) {
-      return res.status(400).json({ message: "Not enrolled in this course" });
-    }
-
-    course.studentsEnrolled.splice(index, 1);
     await course.save();
+
+    // ✅ Update instructor stats
+    await sendInstructorStats(course.instructor);
 
     res.status(200).json({ message: "Unenrolled successfully" });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -214,6 +222,5 @@ router.get("/:id/progress", auth, requireAnyRole(["Instructor", "Admin"]), async
     res.status(500).json({ message: "Server error" });
   }
 });
-
 
 module.exports = router;

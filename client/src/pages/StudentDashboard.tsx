@@ -126,15 +126,15 @@ const StudentDashboard: React.FC = () => {
       <div className="mb-10">
         <h2 className="text-2xl font-semibold mb-4 text-indigo-700">Your Courses</h2>
         {loading ? (
-          <p className="text-gray-600">Loading your courses...</p>
+          <p className="text-gray-400">Loading your courses...</p>
         ) : enrolledCourses.length === 0 ? (
-          <p className="text-gray-600">You haven’t enrolled in any courses yet.</p>
+          <p className="text-gray-400">You haven’t enrolled in any courses yet.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {enrolledCourses.map((course) => (
               <div
                 key={course._id}
-                className="bg-white shadow-md rounded-lg p-6 border-l-4 border-indigo-500"
+                className="bg-slate-900 shadow-md rounded-lg p-6 border-l-4 border-indigo-500"
               >
                 <img
                   src={course.thumbnail}
@@ -144,14 +144,14 @@ const StudentDashboard: React.FC = () => {
                 <h3 className="text-xl font-semibold text-indigo-700 mb-2">
                   {course.title}
                 </h3>
-                <p className="text-gray-600 mb-2">{course.description}</p>
+                <p className="text-gray-400 mb-2">{course.description}</p>
                 <p className="text-gray-500 mb-4">
                   Instructor: {course.instructor?.name || "Unknown"}
                 </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleContinue(course._id)}
-                    className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition"
+                    className="bg-emerald-500 text-white px-4 py-2 rounded-md hover:bg-emerald-600 transition"
                   >
                     Continue Learning
                   </button>
@@ -175,14 +175,14 @@ const StudentDashboard: React.FC = () => {
         </h2>
 
         {allCourses.length === 0 ? (
-          <p className="text-gray-600">No courses available yet.</p>
+          <p className="text-gray-400">No courses available yet.</p>
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {allCourses.map((course) => (
                 <div
                   key={course._id}
-                  className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition"
+                  className="bg-slate-900 shadow-md rounded-lg p-6 hover:shadow-lg transition"
                 >
                   <img
                     src={course.thumbnail}
@@ -192,7 +192,7 @@ const StudentDashboard: React.FC = () => {
                   <h3 className="text-xl font-semibold text-indigo-700 mb-2">
                     {course.title}
                   </h3>
-                  <p className="text-gray-600 mb-2">{course.description}</p>
+                  <p className="text-gray-400 mb-2">{course.description}</p>
                   <p className="text-gray-500 mb-4">
                     Instructor: {course.instructor?.name || "Unknown"}
                   </p>
@@ -208,7 +208,7 @@ const StudentDashboard: React.FC = () => {
                     <button
                       disabled={enrolling === course._id}
                       onClick={() => handleEnroll(course._id)}
-                      className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition disabled:opacity-60"
+                      className="bg-emerald-500 text-white px-4 py-2 rounded-md hover:bg-emerald-600 transition disabled:opacity-60"
                     >
                       {enrolling === course._id ? "Enrolling..." : "Enroll"}
                     </button>
@@ -227,7 +227,7 @@ const StudentDashboard: React.FC = () => {
                 ← Prev
               </button>
 
-              <span className="text-gray-700 font-medium">
+              <span className="text-gray-300 font-medium">
                 Page {page} of {totalPages}
               </span>
 

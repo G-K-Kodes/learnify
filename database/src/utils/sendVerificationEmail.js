@@ -24,12 +24,12 @@ const sendVerificationEmail = async (email, token) => {
     const verificationUrl = `${process.env.CLIENT_URL}/verify-email?token=${token}`;
 
     const mailOptions = {
-      from: `"Online Course Platform" <${process.env.EMAIL_USER}>`,
+      from: `"Lern.it" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Verify your email address",
       html: `
         <div style="font-family: sans-serif; line-height: 1.6;">
-          <h2>Welcome to Online Course Platform!</h2>
+          <h2>Welcome to Lern.it!</h2>
           <p>Please verify your email by clicking the link below:</p>
           <a href="${verificationUrl}" target="_blank" style="color: #4f46e5; font-weight: bold;">Verify Email</a>
           <p style="font-size: 0.9rem; color: #555;">This link will expire in 1 hour.</p>

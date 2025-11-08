@@ -1,15 +1,20 @@
-// src/components/ProtectedRoute.tsx
-import { Navigate } from "react-router-dom";
-import type { ReactNode } from "react";
+// src/components/common/ProtectedRoute.tsx
+// src/components/common/ProtectedRoute.tsx
+import { Navigate, Outlet } from "react-router-dom";
 
-function ProtectedRoute({ children, allowedRoles }: { children: ReactNode; allowedRoles: string[] }) {
+interface ProtectedRouteProps {
+  allowedRoles: string[];
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
-  if (!token) return <Navigate to="/auth" />;
-  if (!allowedRoles.includes(role || "")) return <Navigate to="/" />;
+  if (!token) return <Navigate to="/auth" replace />;
+  if (!allowedRoles.includes(role || "")) return <Navigate to="/" replace />;
 
-  return children;
-}
+  return <Outlet />;
+};
 
 export default ProtectedRoute;
+

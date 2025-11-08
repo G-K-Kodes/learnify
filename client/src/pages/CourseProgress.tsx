@@ -47,7 +47,7 @@ const CourseProgress: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <button
-        className="mb-4 text-green-700 hover:underline"
+        className="mb-4 text-green-700 hover:text-amber-400 underline"
         onClick={() => navigate("/instructor/dashboard")}
       >
         ← Back to Dashboard
@@ -55,7 +55,7 @@ const CourseProgress: React.FC = () => {
 
       <h1 className="text-2xl font-bold mb-4">{data.courseTitle} - Progress</h1>
 
-      <table className="min-w-full bg-white rounded-lg shadow-md overflow-hidden">
+      <table className="min-w-full bg-slate-900 rounded-lg shadow-md overflow-hidden">
         <thead className="bg-green-100">
           <tr>
             <th className="text-left px-4 py-2">Student Name</th>
